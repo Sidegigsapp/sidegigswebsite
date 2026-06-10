@@ -15,9 +15,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 window.addEventListener('scroll', function() {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(26, 26, 26, 0.98)';
+        navbar.style.background = 'rgba(0, 0, 0, 0.6)';
     } else {
-        navbar.style.background = 'rgba(26, 26, 26, 0.95)';
+        navbar.style.background = 'rgba(0, 0, 0, 0.3)';
     }
 });
 
@@ -60,19 +60,15 @@ document.querySelectorAll('.download-btn').forEach(btn => {
     });
 });
 
-// Add click tracking for download buttons (you can replace with actual app store links)
+// Click tracking for download buttons
 document.querySelectorAll('.download-btn').forEach(btn => {
     btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        
         if (this.classList.contains('google-play')) {
-            // Replace with actual Google Play Store URL
             console.log('Google Play Store clicked');
-            // window.open('https://play.google.com/store/apps/details?id=your.app.id', '_blank');
+            window.open('https://play.google.com/store/apps/details?id=com.app.sidegigs', '_blank');
         } else if (this.classList.contains('app-store')) {
-            // Replace with actual App Store URL
             console.log('App Store clicked');
-            // window.open('https://apps.apple.com/app/your-app-id', '_blank');
+            window.open('https://apps.apple.com/in/app/sidegigs/id6767884076', '_blank');
         }
     });
 });
