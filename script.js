@@ -34,6 +34,7 @@ if (phoneMockup) {
     
     // Animate elements on load
     setTimeout(() => {
+        if (!heroContent) return;
         heroContent.style.transition = 'all 0.8s ease';
         heroContent.style.opacity = '1';
         heroContent.style.transform = 'translateY(0)';

@@ -10,6 +10,12 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://sidegigs.app/jobs.html</loc>
+    <lastmod>2026-10-26</lastmod>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
     <loc>https://sidegigs.app/career.html</loc>
     <lastmod>2025-06-10</lastmod>
     <priority>0.7</priority>
