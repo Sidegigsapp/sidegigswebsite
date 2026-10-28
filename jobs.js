@@ -614,7 +614,7 @@
                     <ul>${gig.needs.map((need) => `<li>${esc(need)}</li>`).join('')}</ul>
                     <div class="jobs-apply-wrap">
                         ${applyButton()}
-                        <p class="jobs-apply-note">No resume, no interview. Apply in the Sidegigs app in one tap.</p>
+                        <p class="jobs-apply-note">No interview round. Some employers may ask for a resume.</p>
                     </div>
                 </div>`;
             panel.querySelector('[data-action="back"]').focus({ preventScroll: true });
