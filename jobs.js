@@ -47,7 +47,8 @@
     const INDIA_VIEW = { lng: 80, lat: 13 };
     const WORLD_VIEW = { lng: 60, lat: 15, zoom: 1 };
     const MIN_ZOOM = 0.9;
-    const MAX_ZOOM = 5;
+    const MAX_ZOOM = 20;
+    const PLACE_ZOOM = 6; // how close picking a place leans in
     const MAX_TILT = 60;
     const DOT_GAP = 5; // css px between land dots, whatever the zoom
     const DEG = Math.PI / 180;
@@ -86,36 +87,65 @@
 
     /* ---------- Land dots ---------- */
 
-    const land = (() => {
-        const bin = atob(window.SIDEGIGS_LAND);
+    function decode(base64) {
+        const bin = atob(base64);
         const bytes = new Uint8Array(bin.length);
         for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
         return bytes;
-    })();
+    }
+
+    const land = decode(window.SIDEGIGS_LAND);
+    // India and around it also have a finer map, for when the globe is zoomed
+    // right in.
+    const fine = window.SIDEGIGS_LAND_FINE ? { ...window.SIDEGIGS_LAND_FINE, bits: decode(window.SIDEGIGS_LAND_FINE.bits) } : null;
+    const fineCols = fine ? (fine.east - fine.west) * fine.perDegree : 0;
 
     function isLand(lat, lng) {
+        lng = wrapLng(lng);
+        if (fine && lat > fine.south && lat < fine.north && lng > fine.west && lng < fine.east) {
+            const i = Math.floor((fine.north - lat) * fine.perDegree) * fineCols + Math.floor((lng - fine.west) * fine.perDegree);
+            return (fine.bits[i >> 3] >> (i & 7)) & 1;
+        }
         const row = clamp(Math.floor((90 - lat) * 2), 0, 359);
-        const col = clamp(Math.floor((wrapLng(lng) + 180) * 2), 0, 719);
+        const col = clamp(Math.floor((lng + 180) * 2), 0, 719);
         const i = row * 720 + col;
         return (land[i >> 3] >> (i & 7)) & 1;
     }
 
     // Dots sit on rows of latitude, spaced so they keep the same gap in pixels
     // at any zoom. Each dot is stored as sin(lat), cos(lat), lng in radians.
+    // Zoomed out, the whole world is built once; zoomed in, only the patch
+    // around the view, rebuilt as you move. Both use the same grid, so dots
+    // stay put when the patch is rebuilt.
     let dots = null;
     let dotStep = 0;
+    let patch = null; // { lat, lng, span } the dots cover, or null for the world
 
-    function buildDots(step) {
+    function buildDots(step, area) {
         const out = [];
-        for (let lat = -90 + step / 2; lat < 90; lat += step) {
+        const south = area ? Math.max(-90, area.lat - area.span) : -90;
+        const north = area ? Math.min(90, area.lat + area.span) : 90;
+        const first = Math.ceil((south + 90) / step - 0.5);
+        for (let row = first, lat = -90 + (row + 0.5) * step; lat < north; row++, lat = -90 + (row + 0.5) * step) {
             const count = Math.max(1, Math.round((360 * Math.cos(lat * DEG)) / step));
-            for (let k = 0; k < count; k++) {
-                const lng = -180 + (k + 0.5) * (360 / count);
+            const gap = 360 / count;
+            let k0 = 0;
+            let k1 = count - 1;
+            if (area) {
+                const reach = area.span / Math.max(Math.cos(Math.min(89, Math.abs(lat)) * DEG), 0.02);
+                if (reach < 180) {
+                    k0 = Math.floor((area.lng - reach + 180) / gap);
+                    k1 = Math.ceil((area.lng + reach + 180) / gap);
+                }
+            }
+            for (let k = k0; k <= k1; k++) {
+                const lng = wrapLng(-180 + (((k % count) + count) % count + 0.5) * gap);
                 if (isLand(lat, lng)) out.push(Math.sin(lat * DEG), Math.cos(lat * DEG), lng * DEG);
             }
         }
         dots = new Float32Array(out);
         dotStep = step;
+        patch = area;
     }
 
     // A phone is narrow, so India needs more zoom to fill it.
@@ -128,10 +158,24 @@
     }
 
     function ensureDots() {
-        // Below about a third of a degree the half-degree land data shows its
-        // squares, so the dots stop getting closer there.
-        const step = Math.round(clamp((DOT_GAP / radius()) / DEG, 0.35, 3) * 20) / 20;
-        if (step !== dotStep) buildDots(step);
+        // The fine land data is a twentieth of a degree, so the dots stop
+        // getting closer there.
+        const wanted = clamp((DOT_GAP / radius()) / DEG, 0.05, 3);
+        const step = wanted >= 0.35 ? Math.round(wanted * 20) / 20 : Math.round(wanted * 200) / 200;
+        if (step >= 0.35) {
+            if (step !== dotStep || patch) buildDots(step, null);
+            return;
+        }
+        // Half the diagonal of the screen, in degrees, plus a margin so small
+        // moves don't need a rebuild.
+        const span = Math.min(90, (Math.hypot(size.w, size.h) / 2 / radius()) / DEG * 1.15 + step * 4);
+        const moved = patch && Math.max(
+            Math.abs(view.lat - patch.lat),
+            Math.abs(wrapLng(view.lng - patch.lng)) * Math.cos(view.lat * DEG)
+        );
+        if (step !== dotStep || !patch || moved + span > patch.span) {
+            buildDots(step, { lat: view.lat, lng: wrapLng(view.lng), span: span * 1.4 });
+        }
     }
 
     /* ---------- Projection ---------- */
@@ -272,7 +316,7 @@
             el.classList.toggle('is-selected', city.id === selected);
             // Only the big cities are named when zoomed out, so Kerala's pins
             // don't bury each other in labels.
-            el.classList.toggle('is-named', city.id === selected || Boolean(city.major && view.zoom >= 1.8));
+            el.classList.toggle('is-named', city.id === selected || view.zoom >= 9 || Boolean(city.major && view.zoom >= 1.8));
         });
     }
 
@@ -335,36 +379,110 @@
 
     /* ---------- Dragging and keys ---------- */
 
-    let drag = null;
+    // The point on the globe under screen position (x, y), or null off the edge.
+    function unproject(x, y) {
+        const r = radius();
+        const X = (x - size.cx) / r;
+        const Y = (size.cy - y) / r;
+        const d = X * X + Y * Y;
+        if (d >= 1) return null;
+        const Z = Math.sqrt(1 - d);
+        return {
+            lat: Math.asin(clamp(Z * sinLat0 + Y * cosLat0, -1, 1)) / DEG,
+            lng: wrapLng(lng0 / DEG + Math.atan2(X, Z * cosLat0 - Y * sinLat0) / DEG)
+        };
+    }
+
+    // Zoom by factor, keeping the point under (x, y) where it is.
+    function zoomAt(factor, x, y) {
+        tween = null;
+        prepareProjection();
+        const before = unproject(x, y);
+        view.zoom = clamp(view.zoom * factor, MIN_ZOOM, MAX_ZOOM);
+        if (before) {
+            // Two passes get the point back under the cursor closely enough.
+            for (let pass = 0; pass < 2; pass++) {
+                prepareProjection();
+                const after = unproject(x, y);
+                if (!after) break;
+                view.lng = wrapLng(view.lng + wrapLng(before.lng - after.lng));
+                view.lat = clamp(view.lat + before.lat - after.lat, -MAX_TILT, MAX_TILT);
+            }
+        }
+        requestDraw();
+    }
+
+    function stagePoint(event) {
+        const rect = stage.getBoundingClientRect();
+        return [event.clientX - rect.left, event.clientY - rect.top];
+    }
+
+    // One finger or the mouse turns the globe; two fingers pinch to zoom.
+    const pointers = new Map();
+    let pinch = null;
+
+    function startPinch() {
+        const [a, b] = [...pointers.values()];
+        pinch = { dist: Math.hypot(a.x - b.x, a.y - b.y) || 1, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    }
 
     stage.addEventListener('pointerdown', (event) => {
         if (event.button !== 0) return;
         tween = null;
-        drag = { id: event.pointerId, x: event.clientX, y: event.clientY };
+        const [x, y] = stagePoint(event);
+        pointers.set(event.pointerId, { x, y });
         stage.setPointerCapture(event.pointerId);
         stage.classList.add('is-dragging');
+        if (pointers.size === 2) startPinch();
     });
 
     stage.addEventListener('pointermove', (event) => {
-        if (!drag || drag.id !== event.pointerId) return;
+        const last = pointers.get(event.pointerId);
+        if (!last) return;
+        const [x, y] = stagePoint(event);
+        const dx = x - last.x;
+        const dy = y - last.y;
+        last.x = x;
+        last.y = y;
+        if (pinch && pointers.size >= 2) {
+            const [a, b] = [...pointers.values()];
+            const dist = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+            const mx = (a.x + b.x) / 2;
+            const my = (a.y + b.y) / 2;
+            const r = radius();
+            view.lng = wrapLng(view.lng - ((mx - pinch.x) / r) / DEG);
+            view.lat = clamp(view.lat + ((my - pinch.y) / r) / DEG, -MAX_TILT, MAX_TILT);
+            zoomAt(dist / pinch.dist, mx, my);
+            pinch = { dist, x: mx, y: my };
+            return;
+        }
         const r = radius();
-        const dx = event.clientX - drag.x;
-        const dy = event.clientY - drag.y;
-        drag.x = event.clientX;
-        drag.y = event.clientY;
         view.lng = wrapLng(view.lng - (dx / r) / DEG);
         view.lat = clamp(view.lat + (dy / r) / DEG, -MAX_TILT, MAX_TILT);
         requestDraw();
     });
 
     function endDrag(event) {
-        if (!drag || drag.id !== event.pointerId) return;
-        drag = null;
-        stage.classList.remove('is-dragging');
+        if (!pointers.delete(event.pointerId)) return;
+        if (pointers.size === 2) startPinch();
+        else pinch = null;
+        if (!pointers.size) stage.classList.remove('is-dragging');
     }
 
     stage.addEventListener('pointerup', endDrag);
     stage.addEventListener('pointercancel', endDrag);
+
+    // The mouse wheel, or a pinch on a trackpad (which arrives as a wheel with
+    // ctrlKey), zooms toward the cursor. Pins sit above the stage, so this
+    // listens on the whole section and leaves the panels alone.
+    stage.closest('.jobs-section').addEventListener('wheel', (event) => {
+        if (event.target.closest('.jobs-panel, .jobs-intro, .jobs-controls')) return;
+        event.preventDefault();
+        const lines = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? size.h : 1;
+        const delta = clamp(event.deltaY * lines, -120, 120);
+        const [x, y] = stagePoint(event);
+        zoomAt(Math.exp(-delta * (event.ctrlKey ? 0.01 : 0.002)), x, y);
+    }, { passive: false });
 
     stage.addEventListener('keydown', (event) => {
         const moves = { ArrowLeft: [-15, 0], ArrowRight: [15, 0], ArrowUp: [0, 10], ArrowDown: [0, -10] };
@@ -596,7 +714,7 @@
         // middle of the globe. On a phone it goes higher still, above the
         // sheet the details come up in.
         // Lean right in: most openings are a few km apart in Kerala.
-        const zoom = city.remote ? Math.min(view.zoom, 1.3) : MAX_ZOOM;
+        const zoom = city.remote ? Math.min(view.zoom, 1.3) : Math.max(view.zoom, PLACE_ZOOM);
         const lat = size.w >= 992
             ? city.lat * 0.6 - 2
             : city.lat - (size.h * 0.25 / (size.base * zoom)) / DEG;
