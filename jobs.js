@@ -6,133 +6,42 @@
     const PLAY_URL = 'https://play.google.com/store/apps/details?id=com.app.sidegigs';
     const APP_STORE_URL = 'https://apps.apple.com/in/app/sidegigs/id6767884076';
 
-    // The kinds of gig on offer. Cities list them by key below.
-    const GIGS = {
-        event: {
-            title: 'Event Crew',
-            type: 'One-day',
-            when: 'Sat, 3pm – 11pm',
-            about: 'Help set up stalls, guide guests and pack down after a wedding reception. Food is provided on site.',
-            needs: ['Comfortable on your feet for 8 hours', 'Black shirt and trousers', 'Reach the venue 30 minutes early']
-        },
-        barista: {
-            title: 'Café Barista',
-            type: 'Part-time',
-            when: 'Weekdays, 5pm – 10pm',
-            about: 'Take orders, make coffee and keep the counter tidy during the evening rush. Training on the machine is given on day one.',
-            needs: ['Friendly with customers', 'Basic English or local language', 'Available at least 3 evenings a week']
-        },
-        delivery: {
-            title: 'Delivery Partner',
-            type: 'Flexible',
-            when: 'Pick your own hours',
-            about: 'Deliver groceries and parcels within 5 km. You choose the slots that suit you and get paid per drop plus a daily bonus.',
-            needs: ['Own two-wheeler and a valid licence', 'Smartphone with mobile data', 'Know the local area']
-        },
-        promoter: {
-            title: 'Brand Promoter',
-            type: 'Weekend',
-            when: 'Sat – Sun, 11am – 7pm',
-            about: 'Run a sampling stall in a shopping mall, talk to shoppers about a new snack brand and hand out samples.',
-            needs: ['Confident speaking to strangers', 'Neat appearance', 'Both weekend days']
-        },
-        tutor: {
-            title: 'Home Tutor (Maths)',
-            type: 'Part-time',
-            when: 'Mon, Wed, Fri · 6pm – 8pm',
-            about: 'Teach maths to a class 9 student at their home. Syllabus and books are provided by the family.',
-            needs: ['Strong in school maths', 'Patient and punctual', 'Lives within 5 km']
-        },
-        warehouse: {
-            title: 'Warehouse Packer',
-            type: 'Shift',
-            when: 'Night shift, 10pm – 6am',
-            about: 'Pick, pack and label orders for next-day dispatch during the festive sale. Night allowance included.',
-            needs: ['Can lift up to 10 kg', 'Okay with night shifts', 'Closed shoes']
-        },
-        retail: {
-            title: 'Retail Assistant',
-            type: 'Weekend',
-            when: 'Sat – Sun, 10am – 8pm',
-            about: 'Help customers find sizes, restock shelves and manage the trial rooms at a clothing store during the sale.',
-            needs: ['Good with people', 'Weekend availability for 4 weeks', 'Basic billing knowledge is a plus']
-        },
-        data: {
-            title: 'Data Entry Assistant',
-            type: 'Remote',
-            when: 'Any 4 hours a day',
-            about: 'Enter product details from photos into a spreadsheet. Work from home at your own pace with a daily target.',
-            needs: ['Laptop and stable internet', 'Typing speed of 30 wpm or more', 'Attention to detail']
-        },
-        photo: {
-            title: 'Event Photographer',
-            type: 'One-day',
-            when: 'Sun, 9am – 2pm',
-            about: 'Cover a college fest: candid shots of the crowd and the main stage. Edited photos are due within two days.',
-            needs: ['Own DSLR or mirrorless camera', 'A portfolio link', 'Basic Lightroom editing']
-        },
-        survey: {
-            title: 'Field Surveyor',
-            type: '3 days',
-            when: 'Thu – Sat, 10am – 5pm',
-            about: 'Visit local shops with a short survey on the app and record their answers. Travel allowance is paid per day.',
-            needs: ['Smartphone with data', 'Speaks the local language', 'Comfortable walking outdoors']
-        },
-        kitchen: {
-            title: 'Kitchen Helper',
-            type: 'Part-time',
-            when: 'Daily, 11am – 3pm',
-            about: 'Prep vegetables, plate orders and keep the kitchen clean during the lunch rush at a busy restaurant.',
-            needs: ['Hygiene-minded', 'Quick on your feet', 'Lunch provided']
-        },
-        social: {
-            title: 'Social Media Assistant',
-            type: 'Remote',
-            when: '2 hours a day, flexible',
-            about: 'Schedule posts, reply to comments and make simple reels for a small local brand.',
-            needs: ['Knows Instagram well', 'Canva or a similar tool', 'Writes clear captions']
-        },
-        voice: {
-            title: 'Malayalam Voice-over',
-            type: 'Remote',
-            when: 'One recording session',
-            about: 'Record a 3-minute script in Malayalam for a client abroad. Work from home with a decent microphone.',
-            needs: ['Clear Malayalam diction', 'Quiet room to record', 'Turn around within 48 hours']
-        },
-        support: {
-            title: 'Chat Support (Hindi)',
-            type: 'Remote',
-            when: 'Evenings, 4 hours',
-            about: 'Answer customer chats in Hindi and English for an overseas online store. All tools are browser based.',
-            needs: ['Fluent Hindi and English', 'Laptop and stable internet', 'Available 4 evenings a week']
-        }
-    };
+    const API = 'https://api.sidegigs.app/api';
+    const LOAD_TIMEOUT = 15000;
 
-    // Each listing is [gig, pay, spots left, posted]. Cities abroad are remote
-    // gigs done from India for clients there.
-    const CITIES = [
-        { id: 'kannur', name: 'Kannur', region: 'Kerala', lat: 11.87, lng: 75.37, jobs: [['event', '₹900/day', 8, '1h ago'], ['tutor', '₹350/hr', 1, '3h ago'], ['kitchen', '₹600/day', 2, '5h ago']] },
-        { id: 'kozhikode', name: 'Kozhikode', region: 'Kerala', lat: 11.25, lng: 75.78, jobs: [['barista', '₹550/shift', 3, '40m ago'], ['photo', '₹2,500/day', 1, '2h ago'], ['delivery', '₹45/drop', 15, 'Today']] },
-        { id: 'kochi', name: 'Kochi', region: 'Kerala', lat: 9.93, lng: 76.27, major: true, hot: true, jobs: [['event', '₹1,000/day', 20, '20m ago'], ['promoter', '₹1,200/day', 6, '1h ago'], ['retail', '₹800/day', 10, '2h ago'], ['social', '₹8,000/month', 1, 'Yesterday']] },
-        { id: 'trivandrum', name: 'Thiruvananthapuram', region: 'Kerala', lat: 8.52, lng: 76.94, jobs: [['survey', '₹700/day', 12, '4h ago'], ['tutor', '₹300/hr', 2, 'Today']] },
-        { id: 'coimbatore', name: 'Coimbatore', region: 'Tamil Nadu', lat: 11.02, lng: 76.96, jobs: [['warehouse', '₹850/night', 25, '2h ago'], ['kitchen', '₹550/day', 3, 'Today']] },
-        { id: 'bengaluru', name: 'Bengaluru', region: 'Karnataka', lat: 12.97, lng: 77.59, major: true, hot: true, jobs: [['delivery', '₹50/drop', 40, '10m ago'], ['barista', '₹650/shift', 5, '1h ago'], ['warehouse', '₹950/night', 30, '1h ago'], ['data', '₹500/day', 10, '3h ago'], ['photo', '₹3,000/day', 2, 'Today']] },
-        { id: 'chennai', name: 'Chennai', region: 'Tamil Nadu', lat: 13.08, lng: 80.27, major: true, jobs: [['retail', '₹750/day', 12, '30m ago'], ['event', '₹950/day', 15, '2h ago'], ['survey', '₹700/day', 8, 'Today']] },
-        { id: 'hyderabad', name: 'Hyderabad', region: 'Telangana', lat: 17.39, lng: 78.49, major: true, jobs: [['warehouse', '₹900/night', 35, '45m ago'], ['promoter', '₹1,100/day', 8, '2h ago'], ['delivery', '₹45/drop', 25, 'Today']] },
-        { id: 'pune', name: 'Pune', region: 'Maharashtra', lat: 18.52, lng: 73.86, jobs: [['barista', '₹600/shift', 4, '1h ago'], ['tutor', '₹400/hr', 2, '5h ago']] },
-        { id: 'mumbai', name: 'Mumbai', region: 'Maharashtra', lat: 19.08, lng: 72.88, major: true, hot: true, jobs: [['event', '₹1,200/day', 30, '15m ago'], ['promoter', '₹1,400/day', 10, '1h ago'], ['retail', '₹900/day', 14, '3h ago'], ['photo', '₹3,500/day', 3, 'Today']] },
-        { id: 'ahmedabad', name: 'Ahmedabad', region: 'Gujarat', lat: 23.02, lng: 72.57, jobs: [['warehouse', '₹800/night', 20, '2h ago'], ['survey', '₹650/day', 10, 'Yesterday']] },
-        { id: 'jaipur', name: 'Jaipur', region: 'Rajasthan', lat: 26.91, lng: 75.79, jobs: [['event', '₹850/day', 18, '3h ago'], ['kitchen', '₹550/day', 4, 'Today']] },
-        { id: 'delhi', name: 'New Delhi', region: 'Delhi', lat: 28.61, lng: 77.21, major: true, hot: true, jobs: [['delivery', '₹50/drop', 50, '5m ago'], ['retail', '₹850/day', 20, '1h ago'], ['promoter', '₹1,300/day', 12, '2h ago'], ['data', '₹500/day', 15, 'Today']] },
-        { id: 'chandigarh', name: 'Chandigarh', region: 'Punjab', lat: 30.73, lng: 76.78, jobs: [['barista', '₹550/shift', 3, '4h ago']] },
-        { id: 'lucknow', name: 'Lucknow', region: 'Uttar Pradesh', lat: 26.85, lng: 80.95, jobs: [['tutor', '₹300/hr', 3, '2h ago'], ['survey', '₹600/day', 15, 'Today']] },
-        { id: 'kolkata', name: 'Kolkata', region: 'West Bengal', lat: 22.57, lng: 88.36, major: true, jobs: [['event', '₹800/day', 16, '1h ago'], ['kitchen', '₹500/day', 5, '3h ago'], ['social', '₹7,000/month', 1, 'Today']] },
-        { id: 'guwahati', name: 'Guwahati', region: 'Assam', lat: 26.14, lng: 91.74, jobs: [['survey', '₹600/day', 10, 'Yesterday']] },
-        { id: 'dubai', name: 'Dubai', region: 'Remote · UAE client', lat: 25.2, lng: 55.27, remote: true, jobs: [['voice', '₹2,000/script', 2, '2h ago'], ['support', '₹600/day', 5, 'Today']] },
-        { id: 'singapore', name: 'Singapore', region: 'Remote · Singapore client', lat: 1.35, lng: 103.82, remote: true, jobs: [['data', '₹650/day', 6, '4h ago']] },
-        { id: 'london', name: 'London', region: 'Remote · UK client', lat: 51.51, lng: -0.13, remote: true, jobs: [['support', '₹700/day', 4, 'Yesterday']] },
-        { id: 'toronto', name: 'Toronto', region: 'Remote · Canada client', lat: 43.65, lng: -79.38, remote: true, jobs: [['social', '₹9,000/month', 1, 'Today']] }
+    // Places we know the position of. Jobs from the app are filed under the
+    // nearest one (within NEAR_KM); classifieds only give a town name, so they
+    // are matched against the names and aliases here.
+    const NEAR_KM = 30;
+    const KNOWN_PLACES = [
+        { id: 'kasaragod', name: 'Kasaragod', region: 'Kerala', lat: 12.5, lng: 75.0 },
+        { id: 'kannur', name: 'Kannur', region: 'Kerala', lat: 11.87, lng: 75.37 },
+        { id: 'kozhikode', name: 'Kozhikode', region: 'Kerala', lat: 11.25, lng: 75.78, aliases: ['calicut'] },
+        { id: 'wayanad', name: 'Wayanad', region: 'Kerala', lat: 11.69, lng: 76.08, aliases: ['kalpetta'] },
+        { id: 'malappuram', name: 'Malappuram', region: 'Kerala', lat: 11.05, lng: 76.07, aliases: ['kottakkal', 'tirur', 'manjeri', 'perinthalmanna'] },
+        { id: 'palakkad', name: 'Palakkad', region: 'Kerala', lat: 10.78, lng: 76.65, aliases: ['palghat'] },
+        { id: 'thrissur', name: 'Thrissur', region: 'Kerala', lat: 10.53, lng: 76.21, aliases: ['trichur'] },
+        { id: 'kochi', name: 'Kochi', region: 'Kerala', lat: 9.98, lng: 76.29, aliases: ['ernakulam', 'cochin', 'edappally', 'kakkanad', 'aluva', 'thrippunithura', 'tripunithura', 'kalamassery', 'vyttila'] },
+        { id: 'idukki', name: 'Idukki', region: 'Kerala', lat: 9.85, lng: 76.97, aliases: ['thodupuzha', 'munnar'] },
+        { id: 'kottayam', name: 'Kottayam', region: 'Kerala', lat: 9.59, lng: 76.52 },
+        { id: 'alappuzha', name: 'Alappuzha', region: 'Kerala', lat: 9.5, lng: 76.34, aliases: ['alleppey'] },
+        { id: 'pathanamthitta', name: 'Pathanamthitta', region: 'Kerala', lat: 9.26, lng: 76.78, aliases: ['thiruvalla'] },
+        { id: 'kollam', name: 'Kollam', region: 'Kerala', lat: 8.89, lng: 76.61, aliases: ['quilon'] },
+        { id: 'trivandrum', name: 'Thiruvananthapuram', region: 'Kerala', lat: 8.52, lng: 76.94, aliases: ['trivandrum', 'kazhakkoottam', 'technopark', 'attingal', 'vakkom', 'varkala'] },
+        { id: 'coimbatore', name: 'Coimbatore', region: 'Tamil Nadu', lat: 11.02, lng: 76.96 },
+        { id: 'bengaluru', name: 'Bengaluru', region: 'Karnataka', lat: 12.97, lng: 77.59, aliases: ['bangalore'] },
+        { id: 'mangaluru', name: 'Mangaluru', region: 'Karnataka', lat: 12.91, lng: 74.86, aliases: ['mangalore'] },
+        { id: 'chennai', name: 'Chennai', region: 'Tamil Nadu', lat: 13.08, lng: 80.27, aliases: ['madras'] },
+        { id: 'hyderabad', name: 'Hyderabad', region: 'Telangana', lat: 17.39, lng: 78.49 },
+        { id: 'pune', name: 'Pune', region: 'Maharashtra', lat: 18.52, lng: 73.86 },
+        { id: 'mumbai', name: 'Mumbai', region: 'Maharashtra', lat: 19.08, lng: 72.88, aliases: ['bombay'] },
+        { id: 'delhi', name: 'New Delhi', region: 'Delhi', lat: 28.61, lng: 77.21, aliases: ['delhi'] },
+        { id: 'kolkata', name: 'Kolkata', region: 'West Bengal', lat: 22.57, lng: 88.36 }
     ];
+
+    // Filled from the API: the places with at least one opening, each with
+    // its list of jobs.
+    let CITIES = [];
 
     // Where the globe opens and what the India / World buttons go back to.
     const INDIA_VIEW = { lng: 80, lat: 13 };
@@ -333,6 +242,8 @@
     const markers = new Map();
 
     function buildMarkers() {
+        markerLayer.textContent = '';
+        markers.clear();
         CITIES.forEach((city) => {
             const button = document.createElement('button');
             button.type = 'button';
@@ -497,6 +408,165 @@
 
     new ResizeObserver(resize).observe(stage);
 
+    /* ---------- Jobs from the app ---------- */
+
+    // 'loading' until the API answers, then 'ready' or 'failed'.
+    let loadState = 'loading';
+
+    async function post(path, body) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), LOAD_TIMEOUT);
+        try {
+            const response = await fetch(`${API}${path}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+                signal: controller.signal
+            });
+            if (!response.ok) throw new Error(`${path} answered ${response.status}`);
+            const json = await response.json();
+            if (!json.status || !Array.isArray(json.data)) throw new Error(`${path} sent no list`);
+            return json.data;
+        } finally {
+            clearTimeout(timer);
+        }
+    }
+
+    function clean(text) {
+        const value = String(text ?? '').trim();
+        // The app's form leaves 'string' in fields nobody filled in.
+        return value.toLowerCase() === 'string' ? '' : value;
+    }
+
+    function formatPay(amount, type) {
+        const value = Number(amount);
+        if (!value) return 'Pay shared in the app';
+        const money = `₹${value.toLocaleString('en-IN')}`;
+        const per = { daily: '/day', monthly: '/month', hourly: '/hr', weekly: '/week', 'per job': ' per job' }[clean(type).toLowerCase()];
+        return per ? money + per : `${money} ${clean(type)}`.trim();
+    }
+
+    function formatDate(value) {
+        const date = value ? new Date(value) : null;
+        if (!date || Number.isNaN(date.getTime())) return '';
+        return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function postedAgo(value) {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '';
+        const hours = (Date.now() - date.getTime()) / 36e5;
+        if (hours < 1) return 'Just now';
+        if (hours < 24) return `${Math.floor(hours)}h ago`;
+        const days = Math.floor(hours / 24);
+        if (days === 1) return 'Yesterday';
+        if (days < 30) return `${days} days ago`;
+        return formatDate(value);
+    }
+
+    function distanceKm(aLat, aLng, bLat, bLng) {
+        const dLat = (bLat - aLat) * DEG;
+        const dLng = (bLng - aLng) * DEG;
+        const h = Math.sin(dLat / 2) ** 2 + Math.cos(aLat * DEG) * Math.cos(bLat * DEG) * Math.sin(dLng / 2) ** 2;
+        return 12742 * Math.asin(Math.sqrt(h));
+    }
+
+    function placeByName(text) {
+        const words = clean(text).toLowerCase();
+        if (!words) return null;
+        return KNOWN_PLACES.find((place) => [place.name, place.id, ...(place.aliases || [])]
+            .some((name) => new RegExp(`\\b${name.toLowerCase()}\\b`).test(words))) || null;
+    }
+
+    // A job goes under the nearest known place; failing that, under the town
+    // named in its address, at its own position.
+    function placeFor(lat, lng, text) {
+        let best = null;
+        let bestKm = NEAR_KM;
+        KNOWN_PLACES.forEach((place) => {
+            const km = distanceKm(lat, lng, place.lat, place.lng);
+            if (km < bestKm) {
+                best = place;
+                bestKm = km;
+            }
+        });
+        if (best) return best;
+        const parts = clean(text).split(',').map((part) => part.trim()).filter((part) => part && !/\d|^india$/i.test(part));
+        const name = parts[0] || 'Other';
+        return { id: `at-${lat.toFixed(2)}-${lng.toFixed(2)}`, name, region: parts[parts.length - 1] || '', lat, lng };
+    }
+
+    function fromJob(job) {
+        const [lng, lat] = job.location?.coordinates || [];
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+        return {
+            place: placeFor(lat, lng, job.location_text),
+            title: clean(job.job_title) || 'Open position',
+            company: clean(job.company),
+            tag: clean(job.category) || 'Job',
+            pay: formatPay(job.payment, job.payment_type),
+            where: clean(job.location_text),
+            about: clean(job.job_description),
+            needs: clean(job.job_requirements),
+            posted: postedAgo(job.createdAt),
+            until: formatDate(job.end_date),
+            resume: Boolean(job.collect_resume),
+            ours: false,
+            time: new Date(job.createdAt).getTime() || 0
+        };
+    }
+
+    // Classifieds are posted by the Sidegigs team and carry a town name
+    // rather than a position.
+    function fromClassified(item) {
+        const where = clean(item.location || item.location_text);
+        const place = placeByName(where);
+        if (!place) return null;
+        return {
+            place,
+            title: clean(item.title) || 'Classified',
+            company: 'Sidegigs',
+            tag: 'Posted by Sidegigs',
+            pay: item.payment ? formatPay(item.payment, item.payment_type) : 'Details in the app',
+            where: where.replace(/^./, (c) => c.toUpperCase()),
+            about: clean(item.description),
+            needs: '',
+            posted: postedAgo(item.createdAt || item.created_at),
+            until: '',
+            resume: false,
+            ours: true,
+            time: new Date(item.createdAt || item.created_at).getTime() || 0
+        };
+    }
+
+    async function loadJobs() {
+        const [jobs, classifieds] = await Promise.allSettled([
+            post('/jobs/guest_job_list', { status: 'open' }),
+            post('/classified/guest_classified_list', {})
+        ]);
+        if (jobs.status === 'rejected' && classifieds.status === 'rejected') throw jobs.reason;
+        const listings = [
+            ...(jobs.value || []).map(fromJob),
+            ...(classifieds.value || []).map(fromClassified)
+        ].filter(Boolean);
+
+        const byPlace = new Map();
+        listings.forEach((listing) => {
+            const { place } = listing;
+            if (!byPlace.has(place.id)) byPlace.set(place.id, { id: place.id, name: place.name, region: place.region, lat: place.lat, lng: place.lng, jobs: [] });
+            byPlace.get(place.id).jobs.push(listing);
+        });
+        const places = [...byPlace.values()];
+        places.forEach((place) => place.jobs.sort((a, b) => b.time - a.time));
+        places.sort((a, b) => b.jobs.length - a.jobs.length || a.name.localeCompare(b.name));
+        // The busiest places get their names shown and a pulsing pin.
+        places.forEach((place, index) => {
+            place.major = index < 4;
+            place.hot = index === 0 && place.jobs.length > 1;
+        });
+        return places;
+    }
+
     /* ---------- City list and details ---------- */
 
     function countLabel(n) {
@@ -525,7 +595,8 @@
         // Lean a little short of the city's latitude so it sits above the
         // middle of the globe. On a phone it goes higher still, above the
         // sheet the details come up in.
-        const zoom = city.remote ? Math.min(view.zoom, 1.3) : Math.max(view.zoom, indiaView().zoom);
+        // Lean right in: most openings are a few km apart in Kerala.
+        const zoom = city.remote ? Math.min(view.zoom, 1.3) : MAX_ZOOM;
         const lat = size.w >= 992
             ? city.lat * 0.6 - 2
             : city.lat - (size.h * 0.25 / (size.base * zoom)) / DEG;
@@ -580,18 +651,29 @@
         stage.closest('.jobs-section').classList.toggle('has-panel', Boolean(city));
 
         if (!city) {
+            const empty = {
+                loading: ['fa-spinner fa-spin', 'Loading gigs', 'Getting the latest openings from the Sidegigs app.'],
+                failed: ['fa-circle-exclamation', 'Gigs could not load', 'Open the Sidegigs app to see every opening near you.'],
+                none: ['fa-briefcase', 'No open gigs right now', 'New openings are posted every day. Get the app to hear first.'],
+                ready: ['fa-location-dot', 'Pick a place', 'Tap a pin on the globe or a place on the list to see the gigs open there right now.']
+            }[loadState === 'ready' && !CITIES.length ? 'none' : loadState];
             panel.innerHTML = `
                 <div class="jobs-panel-empty">
-                    <div class="jobs-panel-empty-icon"><i class="fas fa-location-dot" aria-hidden="true"></i></div>
-                    <h2>Pick a city</h2>
-                    <p>Tap a pin on the globe or a city on the list to see the gigs open there right now.</p>
+                    <div class="jobs-panel-empty-icon"><i class="fas ${empty[0]}" aria-hidden="true"></i></div>
+                    <h2>${empty[1]}</h2>
+                    <p>${empty[2]}</p>
+                    ${loadState === 'ready' && CITIES.length ? '' : storeButtons()}
                 </div>`;
             return;
         }
 
         if (openJob !== null) {
-            const [key, pay, spots, posted] = city.jobs[openJob];
-            const gig = GIGS[key];
+            const job = city.jobs[openJob];
+            const facts = [
+                ['Posted', job.posted],
+                ['Apply by', job.until],
+                ['Category', job.ours ? '' : job.tag]
+            ].filter(([, value]) => value);
             panel.innerHTML = `
                 <div class="jobs-panel-head">
                     <button type="button" class="jobs-icon-btn" data-action="back" aria-label="Back to ${esc(city.name)} gigs"><i class="fas fa-arrow-left" aria-hidden="true"></i></button>
@@ -599,22 +681,17 @@
                     <button type="button" class="jobs-icon-btn" data-action="close" aria-label="Close"><i class="fas fa-xmark" aria-hidden="true"></i></button>
                 </div>
                 <div class="jobs-detail">
-                    <span class="jobs-tag${gig.type === 'Remote' ? ' is-remote' : ''}">${esc(gig.type)}</span>
-                    <h2>${esc(gig.title)}</h2>
-                    <p class="jobs-detail-where"><i class="fas fa-location-dot" aria-hidden="true"></i> ${esc(city.name)}, ${esc(city.region)}</p>
-                    <div class="jobs-detail-pay">${esc(pay)}</div>
-                    <dl class="jobs-facts">
-                        <div><dt>When</dt><dd>${esc(gig.when)}</dd></div>
-                        <div><dt>Spots left</dt><dd>${spots}</dd></div>
-                        <div><dt>Posted</dt><dd>${esc(posted)}</dd></div>
-                    </dl>
-                    <h3>About the gig</h3>
-                    <p>${esc(gig.about)}</p>
-                    <h3>You'll need</h3>
-                    <ul>${gig.needs.map((need) => `<li>${esc(need)}</li>`).join('')}</ul>
+                    <span class="jobs-tag${job.ours ? ' is-ours' : ''}">${esc(job.tag)}</span>
+                    <h2>${esc(job.title)}</h2>
+                    ${job.company && !job.ours ? `<p class="jobs-detail-company">${esc(job.company)}</p>` : ''}
+                    <p class="jobs-detail-where"><i class="fas fa-location-dot" aria-hidden="true"></i> ${esc(job.where || `${city.name}, ${city.region}`)}</p>
+                    <div class="jobs-detail-pay">${esc(job.pay)}</div>
+                    ${facts.length ? `<dl class="jobs-facts">${facts.map(([label, value]) => `<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>` : ''}
+                    ${job.about ? `<h3>About the ${job.ours ? 'listing' : 'job'}</h3><p class="jobs-detail-text">${esc(job.about)}</p>` : ''}
+                    ${job.needs ? `<h3>You'll need</h3><p class="jobs-detail-text">${esc(job.needs)}</p>` : ''}
                     <div class="jobs-apply-wrap">
                         ${applyButton()}
-                        <p class="jobs-apply-note">No interview round. Some employers may ask for a resume.</p>
+                        <p class="jobs-apply-note">No interview round.${job.resume ? ' This employer asks for a resume, so keep one ready.' : ''}</p>
                     </div>
                 </div>`;
             panel.querySelector('[data-action="back"]').focus({ preventScroll: true });
@@ -625,28 +702,25 @@
             <div class="jobs-panel-head">
                 <div>
                     <h2>${esc(city.name)}</h2>
-                    <span class="jobs-panel-sub">${esc(city.region)} · ${countLabel(city.jobs.length)}</span>
+                    <span class="jobs-panel-sub">${city.region ? `${esc(city.region)} · ` : ''}${countLabel(city.jobs.length)}</span>
                 </div>
                 <button type="button" class="jobs-icon-btn" data-action="close" aria-label="Close"><i class="fas fa-xmark" aria-hidden="true"></i></button>
             </div>
             <ul class="jobs-list">
-                ${city.jobs.map(([key, pay, spots, posted], index) => {
-                    const gig = GIGS[key];
-                    return `
+                ${city.jobs.map((job, index) => `
                     <li>
                         <button type="button" class="jobs-card" data-job="${index}">
                             <span class="jobs-card-top">
-                                <span class="jobs-card-title">${esc(gig.title)}</span>
-                                <span class="jobs-card-pay">${esc(pay)}</span>
+                                <span class="jobs-card-title">${esc(job.title)}</span>
+                                <span class="jobs-card-pay">${esc(job.pay)}</span>
                             </span>
                             <span class="jobs-card-meta">
-                                <span class="jobs-tag${gig.type === 'Remote' ? ' is-remote' : ''}">${esc(gig.type)}</span>
-                                ${esc(gig.when)}
+                                <span class="jobs-tag${job.ours ? ' is-ours' : ''}">${esc(job.tag)}</span>
+                                ${esc(job.ours ? job.where : job.company)}
                             </span>
-                            <span class="jobs-card-foot">${spots} ${spots === 1 ? 'spot' : 'spots'} left · ${esc(posted)}</span>
+                            <span class="jobs-card-foot">${esc([job.ours ? '' : job.where, job.posted].filter(Boolean).join(' · '))}</span>
                         </button>
-                    </li>`;
-                }).join('')}
+                    </li>`).join('')}
             </ul>`;
     }
 
@@ -675,13 +749,31 @@
 
     /* ---------- Start ---------- */
 
-    const total = CITIES.reduce((sum, city) => sum + city.jobs.length, 0);
-    document.getElementById('jobsTotal').textContent = total;
-    document.getElementById('jobsCityCount').textContent = CITIES.filter((city) => !city.remote).length;
+    function showCounts() {
+        const total = CITIES.reduce((sum, city) => sum + city.jobs.length, 0);
+        document.getElementById('jobsTotal').textContent = loadState === 'ready' ? total : '–';
+        document.getElementById('jobsCityCount').textContent = loadState === 'ready' ? CITIES.length : '–';
+    }
 
-    buildMarkers();
+    showCounts();
     renderCityList();
     renderPanel();
+    loadJobs()
+        .then((places) => {
+            CITIES = places;
+            loadState = 'ready';
+        })
+        .catch((error) => {
+            console.warn('Sidegigs jobs could not load:', error);
+            loadState = 'failed';
+        })
+        .then(() => {
+            showCounts();
+            buildMarkers();
+            renderCityList();
+            renderPanel();
+            requestDraw();
+        });
     resize();
     requestAnimationFrame(frame);
     // Open on the world, then turn and lean in to India.

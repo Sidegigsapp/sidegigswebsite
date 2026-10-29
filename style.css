@@ -1174,9 +1174,27 @@ a.link:hover {
     font-weight: 600;
 }
 
-.jobs-tag.is-remote {
+.jobs-tag.is-remote,
+.jobs-tag.is-ours {
     background: rgba(124, 200, 255, 0.14);
     color: #7cc8ff;
+}
+
+.jobs-detail-company {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.2rem;
+}
+
+.jobs-detail .jobs-detail-text {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.jobs-panel-empty .jobs-stores {
+    justify-content: center;
+    margin-top: 1rem;
 }
 
 .jobs-detail h2 {
@@ -1201,7 +1219,7 @@ a.link:hover {
 
 .jobs-facts {
     display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     gap: 0.5rem;
     margin-bottom: 1.25rem;
 }
