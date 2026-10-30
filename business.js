@@ -11,8 +11,8 @@
 
     // The API only has mobile OTP login for managers so far. Email login and
     // saving the business profile have no endpoint yet: fill these in when
-    // they exist. Until then email works only on a local preview (code 123456)
-    // and the profile is kept in this browser.
+    // they exist. Until then email works only on a local or Vercel preview
+    // (code 123456) and the profile is kept in this browser.
     const ENDPOINTS = {
         phoneSend: '/auth/manager/send_otp',
         phoneVerify: '/auth/manager/login_by_otp',
@@ -20,7 +20,8 @@
         emailVerify: null,
         saveBusiness: null
     };
-    const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+    const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) ||
+        /-wrkshift\.vercel\.app$/.test(location.hostname);
     const PREVIEW_CODE = '123456';
 
     const STEPS = ['auth', 'kind', 'identity', 'details', 'plan', 'done'];
