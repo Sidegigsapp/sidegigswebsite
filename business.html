@@ -8,11 +8,20 @@
     <link rel="icon" type="image/png" href="images/fav.png">
     <link rel="apple-touch-icon" href="images/fav.png">
 
-    <title>Create a Job – Business Sign In | Sidegigs</title>
-    <meta name="description" content="Sign in or create a Sidegigs business account to post part-time jobs and gigs.">
-    <meta name="robots" content="noindex, follow">
-    <meta name="theme-color" content="#000000">
+    <title>Post a Job on Sidegigs – Hire Part-Time Staff in Kerala &amp; India</title>
+    <meta name="description"
+        content="Hire part-time and gig workers with Sidegigs. Download the Sidegigs app on Android or iPhone, create your business account and post a job in minutes.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#C3FF00">
     <link rel="canonical" href="https://sidegigs.app/business.html">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sidegigs.app/business.html">
+    <meta property="og:title" content="Post a Job on Sidegigs">
+    <meta property="og:description" content="Hire part-time and gig workers. Post your job in the Sidegigs app.">
+    <meta property="og:image" content="https://sidegigs.app/images/og-image.png">
+    <meta property="og:site_name" content="Sidegigs">
+    <meta name="twitter:card" content="summary_large_image">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -20,7 +29,7 @@
     <link rel="stylesheet" href="business.css">
 </head>
 
-<body class="biz-page">
+<body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
         <div class="container">
@@ -65,232 +74,70 @@
     </nav>
 
     <main class="biz-main">
-        <div class="biz-card" id="bizCard">
+        <section class="biz-hero" aria-labelledby="bizTitle">
+            <span class="biz-eyebrow">For businesses</span>
+            <h1 id="bizTitle">Post jobs in the<br><span class="highlight">Sidegigs app.</span></h1>
+            <p class="biz-lead">Hiring for a shift, an event or the weekend? Create your business account and post
+                jobs from the Sidegigs app. People nearby apply, with no interview round.</p>
 
-            <!-- Sign in / sign up -->
-            <section class="biz-step" data-step="auth" aria-labelledby="authTitle">
-                <h1 class="biz-title" id="authTitle">Hire on Sidegigs</h1>
-                <p class="biz-sub">Sign in or create a business account. New here? Your account is made when you
-                    verify.</p>
-
-                <div class="biz-tabs" role="tablist" aria-label="Sign in with">
-                    <button type="button" role="tab" class="biz-tab is-on" data-method="phone" aria-selected="true">
-                        <i class="fas fa-mobile-alt" aria-hidden="true"></i> Mobile</button>
-                    <button type="button" role="tab" class="biz-tab" data-method="email" aria-selected="false">
-                        <i class="fas fa-envelope" aria-hidden="true"></i> Email</button>
-                </div>
-
-                <form class="biz-form" id="authSend" novalidate>
-                    <div data-for="phone">
-                        <label class="biz-label" for="authPhone">Mobile number</label>
-                        <div class="biz-phone">
-                            <span>+91</span>
-                            <input class="biz-input" id="authPhone" type="tel" inputmode="numeric"
-                                autocomplete="tel-national" maxlength="10" placeholder="10-digit mobile number">
-                        </div>
-                    </div>
-                    <div data-for="email" hidden>
-                        <label class="biz-label" for="authEmail">Work email</label>
-                        <input class="biz-input" id="authEmail" type="email" autocomplete="email"
-                            placeholder="you@business.com">
-                    </div>
-                    <p class="biz-error" id="authSendError" role="alert"></p>
-                    <button class="biz-btn" type="submit">Send code</button>
-                </form>
-
-                <form class="biz-form" id="authVerify" novalidate hidden>
-                    <p class="biz-sent">Code sent to <strong id="authTarget"></strong>
-                        <button type="button" class="biz-link" id="authChange">Change</button></p>
-                    <label class="biz-label" for="authCode">Enter the code</label>
-                    <input class="biz-input biz-code" id="authCode" type="text" inputmode="numeric"
-                        autocomplete="one-time-code" maxlength="6" placeholder="••••••">
-                    <p class="biz-error" id="authVerifyError" role="alert"></p>
-                    <button class="biz-btn" type="submit">Verify and continue</button>
-                    <button type="button" class="biz-link biz-resend" id="authResend">Resend code</button>
-                </form>
-
-                <p class="biz-fine">By continuing you agree to our <a href="terms-conditions.html">Terms</a> and
-                    <a href="privacy-policy.html">Privacy Policy</a>.</p>
-            </section>
-
-            <!-- Step 1: business kind -->
-            <section class="biz-step" data-step="kind" aria-labelledby="kindTitle" hidden>
-                <h1 class="biz-title" id="kindTitle">What best describes your business?</h1>
-
-                <div class="biz-choices" role="radiogroup" aria-label="Business kind">
-                    <button type="button" class="biz-choice" role="radio" data-field="kind" data-value="company">
-                        <span>
-                            <strong>I'm a Company / Business</strong>
-                            <small>For SMB/Large Enterprise, Partnership, Pvt. Ltd., LLP, Public Ltd.</small>
-                        </span>
-                        <i class="far fa-building" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" class="biz-choice" role="radio" data-field="kind" data-value="independent">
-                        <span>
-                            <strong>I'm doing Independent Business</strong>
-                            <small>For Proprietors, Cottage Industry, Micro-Entrepreneurs</small>
-                        </span>
-                        <i class="far fa-user" aria-hidden="true"></i>
-                    </button>
-                </div>
-
-                <p class="biz-question">Are you a recruitment agency?*</p>
-                <div class="biz-pair" role="radiogroup" aria-label="Recruitment agency">
-                    <button type="button" class="biz-pill" role="radio" data-field="agency" data-value="yes">Yes</button>
-                    <button type="button" class="biz-pill" role="radio" data-field="agency" data-value="no">No</button>
-                </div>
-            </section>
-
-            <!-- Step 2: GST and identity -->
-            <section class="biz-step" data-step="identity" aria-labelledby="identityTitle" hidden>
-                <h1 class="biz-title" id="identityTitle">Set up your business profile</h1>
-
-                <p class="biz-question">Are you GST registered?</p>
-                <div class="biz-pair" role="radiogroup" aria-label="GST registered">
-                    <button type="button" class="biz-pill" role="radio" data-field="gst" data-value="yes">Yes</button>
-                    <button type="button" class="biz-pill" role="radio" data-field="gst" data-value="no">No</button>
-                </div>
-
-                <p class="biz-question">Choose a document for business identity verification</p>
-                <div class="biz-pair" role="radiogroup" aria-label="Identity document">
-                    <button type="button" class="biz-pill" role="radio" data-field="doc" data-value="pan">PAN</button>
-                    <button type="button" class="biz-pill" role="radio" data-field="doc" data-value="udyam">Udyam
-                        Aadhar</button>
-                </div>
-
-                <label class="biz-label" for="docNumber" id="docLabel">Enter your PAN number to verify</label>
-                <div class="biz-verify">
-                    <input class="biz-input" id="docNumber" type="text" autocomplete="off" spellcheck="false"
-                        placeholder="Enter document ID number">
-                    <button type="button" class="biz-pill" id="docVerify">Verify</button>
-                </div>
-                <p class="biz-error" id="docError" role="alert"></p>
-            </section>
-
-            <!-- Step 3: business details -->
-            <section class="biz-step" data-step="details" aria-labelledby="detailsTitle" hidden>
-                <h1 class="biz-title" id="detailsTitle">Set up your business profile</h1>
-
-                <label class="biz-label" for="bizName">Business name</label>
-                <input class="biz-input" id="bizName" type="text" autocomplete="organization"
-                    placeholder="Ex: Cleaner">
-
-                <label class="biz-label" for="bizType">Business type</label>
-                <select class="biz-input biz-select" id="bizType">
-                    <option value="">Choose a type</option>
-                    <option>Restaurant</option>
-                    <option>Cafe / Bakery</option>
-                    <option>Retail / Shop</option>
-                    <option>Supermarket</option>
-                    <option>Hotel / Resort</option>
-                    <option>Events / Catering</option>
-                    <option>Delivery / Logistics</option>
-                    <option>Warehouse</option>
-                    <option>Cleaning / Facility</option>
-                    <option>Healthcare</option>
-                    <option>Education / Tuition</option>
-                    <option>Office / IT</option>
-                    <option>Other</option>
-                </select>
-
-                <label class="biz-label" for="bizRole">Your designation in this business*</label>
-                <select class="biz-input biz-select" id="bizRole">
-                    <option value="">Choose your role</option>
-                    <option>Owner</option>
-                    <option>Partner</option>
-                    <option>Manager</option>
-                    <option>HR / Recruiter</option>
-                    <option>Supervisor</option>
-                    <option>Other</option>
-                </select>
-
-                <span class="biz-label" id="logoLabel">Company Logo/image</span>
-                <label class="biz-upload" for="bizLogo" aria-labelledby="logoLabel">
-                    <input id="bizLogo" type="file" accept="image/png,image/jpeg,image/webp">
-                    <img id="bizLogoPreview" alt="" hidden>
-                    <span class="biz-upload-hint" id="bizLogoHint"><i class="far fa-image" aria-hidden="true"></i>
-                        Upload Image</span>
-                </label>
-                <p class="biz-error" id="detailsError" role="alert"></p>
-            </section>
-
-            <!-- Footer for the three setup steps -->
-            <div class="biz-foot" id="bizFoot" hidden>
-                <div class="biz-progress" aria-hidden="true"><span></span><span></span><span></span></div>
-                <div class="biz-foot-row">
-                    <button type="button" class="biz-back" id="bizBack" aria-label="Back"><i
-                            class="fas fa-chevron-left" aria-hidden="true"></i></button>
-                    <button type="button" class="biz-btn" id="bizNext">Next</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Plans -->
-        <section class="biz-plans" data-step="plan" aria-labelledby="planTitle" hidden>
-            <button type="button" class="biz-back is-dark" data-back aria-label="Back"><i
-                    class="fas fa-chevron-left" aria-hidden="true"></i></button>
-            <h1 class="biz-plans-title" id="planTitle">Choose Your Plan</h1>
-
-            <div class="biz-plans-grid">
-                <table class="biz-compare">
-                    <caption class="visually-hidden">What each plan includes</caption>
-                    <thead>
-                        <tr>
-                            <th scope="col"><span class="visually-hidden">Feature</span></th>
-                            <th scope="col" data-col="free">Free</th>
-                            <th scope="col" data-col="growth">Growth</th>
-                            <th scope="col" data-col="plus">Plus</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><th scope="row">Job posts</th><td data-col="free">2</td><td data-col="growth">50</td><td data-col="plus"><i class="fas fa-infinity" aria-label="Unlimited"></i></td></tr>
-                        <tr><th scope="row">Multi-city job posting</th><td data-col="free"><i class="fas fa-check" aria-label="Yes"></i></td><td data-col="growth"><i class="fas fa-check" aria-label="Yes"></i></td><td data-col="plus"><i class="fas fa-check" aria-label="Yes"></i></td></tr>
-                        <tr><th scope="row">HR and attendance</th><td data-col="free"><span aria-label="No">–</span></td><td data-col="growth"><i class="fas fa-check" aria-label="Yes"></i></td><td data-col="plus"><i class="fas fa-check" aria-label="Yes"></i></td></tr>
-                        <tr><th scope="row">Leave management</th><td data-col="free"><span aria-label="No">–</span></td><td data-col="growth"><i class="fas fa-check" aria-label="Yes"></i></td><td data-col="plus"><i class="fas fa-check" aria-label="Yes"></i></td></tr>
-                        <tr><th scope="row">Attendance machine</th><td data-col="free"><span aria-label="No">–</span></td><td data-col="growth"><span aria-label="No">–</span></td><td data-col="plus"><i class="fas fa-check" aria-label="Yes"></i></td></tr>
-                        <tr><th scope="row">Priority support</th><td data-col="free"><span aria-label="No">–</span></td><td data-col="growth"><span aria-label="No">–</span></td><td data-col="plus"><i class="fas fa-check" aria-label="Yes"></i></td></tr>
-                    </tbody>
-                </table>
-
-                <div class="biz-plan-list" role="radiogroup" aria-label="Plan">
-                    <button type="button" class="biz-plan" role="radio" data-field="plan" data-value="free">
-                        <span class="biz-plan-badge">100% off</span>
-                        <span><strong>Basic Plan</strong><small>Billed annually</small></span>
-                        <span class="biz-plan-price">₹0 <s>599</s></span>
-                    </button>
-                    <button type="button" class="biz-plan" role="radio" data-field="plan" data-value="growth">
-                        <span><strong>Growth Plan</strong><small>Billed annually</small></span>
-                        <span class="biz-plan-price">₹4999</span>
-                    </button>
-                    <button type="button" class="biz-plan" role="radio" data-field="plan" data-value="plus">
-                        <span class="biz-plan-badge">50% off</span>
-                        <span><strong>Professional Plus Plan</strong><small>Billed annually</small></span>
-                        <span class="biz-plan-price">₹7999 <s>14000</s></span>
-                    </button>
-                    <p class="biz-error" id="planError" role="alert"></p>
-                    <button type="button" class="biz-btn is-lime" id="planNext">Continue</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Done -->
-        <section class="biz-card biz-done" data-step="done" aria-labelledby="doneTitle" hidden>
-            <span class="biz-done-icon"><i class="fas fa-check" aria-hidden="true"></i></span>
-            <h1 class="biz-title" id="doneTitle">Your business account is ready</h1>
-            <p class="biz-sub" id="doneText"></p>
-            <p class="biz-sub">Post your first job and manage applicants in the Sidegigs app.</p>
-            <div class="biz-stores">
+            <div class="download-buttons biz-stores">
                 <a href="https://play.google.com/store/apps/details?id=com.app.sidegigs" target="_blank"
-                    rel="noopener"><img src="images/google-play-icon.svg" alt=""> Google Play</a>
-                <a class="is-lime" href="https://apps.apple.com/in/app/sidegigs/id6767884076" target="_blank" rel="noopener"><img
-                        src="images/apple-icon.svg" alt=""> App Store</a>
+                    rel="noopener noreferrer" class="download-btn google-play">
+                    <img src="images/google-play-icon.svg" alt="" class="download-icon">
+                    <div class="download-text">
+                        <small>Get it on</small>
+                        Google Play
+                    </div>
+                </a>
+                <a href="https://apps.apple.com/in/app/sidegigs/id6767884076" target="_blank"
+                    rel="noopener noreferrer" class="download-btn app-store">
+                    <img src="images/apple-icon.svg" alt="" class="download-icon">
+                    <div class="download-text">
+                        <small>Download on the</small>
+                        App Store
+                    </div>
+                </a>
             </div>
-            <button type="button" class="biz-link" id="bizSignOut">Sign out</button>
+
+            <ol class="biz-steps">
+                <li><span>1</span><strong>Get the app</strong>Download Sidegigs on Android or iPhone.</li>
+                <li><span>2</span><strong>Set up your business</strong>Sign in, then add your business details.</li>
+                <li><span>3</span><strong>Post your job</strong>Set the pay and place, and start getting applicants.</li>
+            </ol>
         </section>
     </main>
 
+    <footer class="site-footer">
+        <div class="container">
+            <div class="site-footer-grid">
+                <div class="site-footer-brand">
+                    <img src="images/logo.svg" alt="Sidegigs" class="navbar-logo">
+                    <p>Part-time jobs and side gigs in Kerala and across India. No interview round.</p>
+                </div>
+                <nav aria-label="Find work">
+                    <h2>Find work</h2>
+                    <a href="jobs.html">Live gigs map</a>
+                    <a href="part-time-jobs-kerala.html">Part-time jobs in Kerala</a>
+                    <a href="part-time-jobs-kerala.html#kochi">Part-time jobs in Kochi</a>
+                    <a href="part-time-jobs-kerala.html#kozhikode">Part-time jobs in Kozhikode</a>
+                    <a href="part-time-jobs-kerala.html#thiruvananthapuram">Part-time jobs in Thiruvananthapuram</a>
+                </nav>
+                <nav aria-label="Company">
+                    <h2>Company</h2>
+                    <a href="about.html">About Sidegigs</a>
+                    <a href="business.html">Post a job</a>
+                    <a href="career.html">Careers</a>
+                    <a href="mailto:contact@sidegigs.app">Contact us</a>
+                    <a href="privacy-policy.html">Privacy Policy</a>
+                    <a href="terms-conditions.html">Terms and Conditions</a>
+                </nav>
+            </div>
+            <p class="site-footer-legal">© 2026 Wrkshift Pvt. Ltd. · Kerala, India</p>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="business.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

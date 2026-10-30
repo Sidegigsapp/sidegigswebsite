@@ -91,19 +91,30 @@
     }
     </script>
 
-    <!-- JSON-LD Structured Data: WebSite + SearchAction -->
+    <!-- JSON-LD Structured Data: WebSite (site name in Google) + Organization (logo) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Sidegigs",
-      "url": "https://sidegigs.app",
-      "description": "India's #1 part-time and gig jobs app. No interviews.",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://sidegigs.app/?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
+      "alternateName": ["Sidegigs App", "sidegigs.app"],
+      "url": "https://sidegigs.app/",
+      "description": "Part-time jobs and side gigs in Kerala and across India. No interviews."
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Sidegigs",
+      "legalName": "Wrkshift Pvt. Ltd.",
+      "url": "https://sidegigs.app/",
+      "logo": "https://sidegigs.app/images/fav.png",
+      "email": "contact@sidegigs.app",
+      "sameAs": [
+        "https://play.google.com/store/apps/details?id=com.app.sidegigs",
+        "https://apps.apple.com/in/app/sidegigs/id6767884076"
+      ]
     }
     </script>
 
@@ -172,6 +183,7 @@
                 <div class="col-md-8 col-lg-7 ms-auto">
                     <div class="hero-content ms-auto">
                         <h1>
+                            <span class="hero-brand">Sidegigs</span>
                             Find Side Jobs.<br>
                             Earn Fast.<br>
                             <span class="highlight">No Interviews.</span>

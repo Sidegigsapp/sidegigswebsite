@@ -1931,3 +1931,15 @@ a.link:hover {
         margin: 0.5rem 0 0.25rem;
     }
 }
+
+/* Brand name above the homepage headline */
+.hero-content .hero-brand {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary-green);
+    -webkit-text-fill-color: var(--primary-green);
+    margin-bottom: 0.75rem;
+}
