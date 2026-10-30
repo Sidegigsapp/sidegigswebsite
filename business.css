@@ -43,6 +43,11 @@
     margin-bottom: 1rem;
 }
 
+/* Headings take focus when a step opens, for screen readers; no ring needed */
+.biz-page h1:focus {
+    outline: none;
+}
+
 .biz-sub {
     color: var(--biz-muted);
     margin-bottom: 1.5rem;
