@@ -1903,3 +1903,31 @@ a.link:hover {
         display: none;
     }
 }
+
+/* Create job button in the nav */
+.nav-cta-item {
+    display: flex;
+    align-items: center;
+    margin-left: 0.75rem;
+}
+
+.nav-cta {
+    background: var(--primary-green);
+    color: black !important;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.45rem 1.1rem;
+    border-radius: 10px;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+}
+
+.nav-cta:hover {
+    background: #8fdc00;
+}
+
+@media (max-width: 991px) {
+    .nav-cta-item {
+        margin: 0.5rem 0 0.25rem;
+    }
+}
